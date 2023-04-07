@@ -12,30 +12,31 @@ int main(int argc, char** argv) {
     ifstream infile; ofstream outfile;
     string line;
     int numLines = 1;
-    int fallIndex = 1, nextFall = 0;
+    int fallIndex = 0, currFall = 1, nextFall;
 
     initFiles(infile, outfile, argc, argv);
 
-    while (numLines != 0) {
+    while (numLines > 0) {
         getline(infile, line);
         numLines = stoi(line);
         for (int i = 0; i < numLines; i++) {
             getline(infile, line);
-            fallIndex = nextFallIndex(fallIndex, line);
-            if (getline(infile, line)) {
-                nextFall = nextFallIndex(fallIndex, line);
-                if (fallIndex > nextFall || nextFall > line.size()) {
-                    for (int j = 0; j < i; j++)
-                        getline(infile, line);
-                    break;
-                }
-                else {
-                    fallIndex = nextFall;
-                }
-                i++;
-            } else break;
+            currFall = nextFallIndex(currFall, line);
+            if (i < numLines - 1) {
+                getline(infile, line);
+            }
+            nextFall = nextFallIndex(currFall, line);
+            if (nextFall > line.size()) {
+                for (int j = i + 1; j < numLines; j++)
+                    getline(infile, line);
+                break;
+            }
+            if (fallIndex < currFall) fallIndex = currFall;
+            if (fallIndex < nextFall) fallIndex = nextFall;
+            i++;
         }
-        cout << fallIndex + 1 << endl;
+        if (numLines > 0) cout << fallIndex + 1 << endl;
+        fallIndex = currFall = nextFall = 1;
     }
 
     return 0;
