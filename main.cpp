@@ -26,20 +26,15 @@ int main(int argc, char** argv) {
 }
 
 int ballRollIndex(ifstream& infile, string line, int numLines) {
-    int fallIndex = 0, currFall = 1, nextFall;
+    int fallIndex = 1, currFall = 1, nextFall;
     for (int i = 0; i < numLines; i++) {
         getline(infile, line);
-        currFall = nextFallIndex(currFall, line);
+        currFall = nextFallIndex(fallIndex, line);
         if (i < numLines - 1) {
             getline(infile, line);
             i++;
         }
         nextFall = nextFallIndex(currFall, line);
-        if (nextFall > line.size()) {
-            for (int j = i + 1; j < numLines; j++)
-                getline(infile, line);
-            break;
-        }
         if (fallIndex < currFall) fallIndex = currFall;
         if (fallIndex < nextFall) fallIndex = nextFall;
     }
