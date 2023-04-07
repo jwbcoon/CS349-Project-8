@@ -5,6 +5,7 @@ using namespace std;
 
 // Function Prototypes
 void initFiles(ifstream& infile, ofstream& outfile, int argc, char* argv[]);
+int ballRollIndex(ifstream& infile, string line, int numLines);
 int nextFallIndex(int fallIndex, string line);
 
 int main(int argc, char** argv) {
@@ -12,36 +13,38 @@ int main(int argc, char** argv) {
     ifstream infile; ofstream outfile;
     string line;
     int numLines = 1;
-    int fallIndex = 0, currFall = 1, nextFall;
 
     initFiles(infile, outfile, argc, argv);
 
     while (numLines > 0) {
         getline(infile, line);
         numLines = stoi(line);
-        for (int i = 0; i < numLines; i++) {
-            getline(infile, line);
-            currFall = nextFallIndex(currFall, line);
-            if (i < numLines - 1) {
-                getline(infile, line);
-            }
-            nextFall = nextFallIndex(currFall, line);
-            if (nextFall > line.size()) {
-                for (int j = i + 1; j < numLines; j++)
-                    getline(infile, line);
-                break;
-            }
-            if (fallIndex < currFall) fallIndex = currFall;
-            if (fallIndex < nextFall) fallIndex = nextFall;
-            i++;
-        }
-        if (numLines > 0) cout << fallIndex + 1 << endl;
-        fallIndex = currFall = nextFall = 1;
+        if (numLines > 0) cout << ballRollIndex(infile, line, numLines) << endl;
     }
 
     return 0;
 }
 
+int ballRollIndex(ifstream& infile, string line, int numLines) {
+    int fallIndex = 0, currFall = 1, nextFall;
+    for (int i = 0; i < numLines; i++) {
+        getline(infile, line);
+        currFall = nextFallIndex(currFall, line);
+        if (i < numLines - 1) {
+            getline(infile, line);
+            i++;
+        }
+        nextFall = nextFallIndex(currFall, line);
+        if (nextFall > line.size()) {
+            for (int j = i + 1; j < numLines; j++)
+                getline(infile, line);
+            break;
+        }
+        if (fallIndex < currFall) fallIndex = currFall;
+        if (fallIndex < nextFall) fallIndex = nextFall;
+    }
+    return fallIndex + 1;
+}
 
 int nextFallIndex(int fallIndex, string line) {
     int nextFall = 0, spacesDeleted = 0, edge = line.size();
