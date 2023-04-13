@@ -6,7 +6,7 @@ using namespace std;
 // Function Prototypes
 void initFiles(ifstream& infile, ofstream& outfile, int argc, char* argv[]);
 int ballRollIndex(ifstream& infile, string line, int numLines);
-int nextFallIndex(int fallIndex, string line);
+int nextFallIndex(int param, string line);
 
 int main(int argc, char** argv) {
     // Variable defs
@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     while (numLines > 0) {
         getline(infile, line);
         numLines = stoi(line);
-        if (numLines > 0) cout << ballRollIndex(infile, line, numLines) << endl;
+        if (numLines > 0) outfile << ballRollIndex(infile, line, numLines) << endl;
     }
 
     return 0;
@@ -42,11 +42,16 @@ int ballRollIndex(ifstream& infile, string line, int numLines) {
 }
 
 int nextFallIndex(int fallIndex, string line) {
-    int nextFall = 0, spacesDeleted = 0, edge = line.size();
+    int nextFall = 0, edge = line.size();
+    auto spaceIsDeleted = [](int nxtFallVal){ return nxtFallVal != 0; };
     while (nextFall < fallIndex && nextFall < edge) {
-        nextFall += line.find(' ') + spacesDeleted;
-        line.erase(0, line.find(' ') + 1);
-        spacesDeleted++;
+        if (line.find(' ') != string::npos) {
+            nextFall += line.find(' ') + spaceIsDeleted(nextFall);
+            line.erase(0, line.find(' ') + 1);
+        }
+        else {
+            nextFall += line.size() + spaceIsDeleted(nextFall);
+        }
     }
     return nextFall;
 }
