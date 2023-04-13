@@ -5,52 +5,51 @@ using namespace std;
 
 // Function Prototypes
 void initFiles(ifstream& infile, ofstream& outfile, int argc, char* argv[]);
-int ballRollIndex(ifstream& infile, string line, int numLines);
-int nextFallIndex(int fallIndex, string line);
 
 int main(int argc, char** argv) {
     // Variable defs
     ifstream infile; ofstream outfile;
     string line;
-    int numLines = 1;
+    int numLines = 1, fallIndex, currFall, nextFall;
+    auto nextFallIndex = [](int fallIndex, string line) {
+        // Accumulate index of first space and consume it until nextFall
+        // is greater than fallIndex or the line is consumed entirely.
+        int nextFall = -1, edge = line.size();
+        while (nextFall < fallIndex && nextFall < edge) {
+            if (line.find(' ') != string::npos)
+                nextFall += line.find(' ') + 1;
+            else
+                nextFall += line.size() + 1;
+            line.erase(0, line.find(' ') + 1);
+        }
+        return nextFall;
+    };
 
     initFiles(infile, outfile, argc, argv);
 
     while (numLines > 0) {
         getline(infile, line);
         numLines = stoi(line);
-        if (numLines > 0) outfile << ballRollIndex(infile, line, numLines) << endl;
+        fallIndex = 0; // If the first space is a whitespace or there is nothing, fall immediately
+
+        for (int i = 0; i < numLines; i++) {
+            getline(infile, line);
+            currFall = nextFallIndex(fallIndex, line); // Index of where the first space after fallIndex
+                                                       // or the index of the end of the line (current line)
+            if (i < numLines - 1) { // Read a second line unless current line is the last line
+                getline(infile, line);
+                i++;
+            }
+            nextFall = nextFallIndex(currFall, line); // Index of where the first space after fallIndex
+                                                              // or the index of the end of the line (next line)
+            if (fallIndex < currFall) fallIndex = currFall;
+            if (fallIndex < nextFall) fallIndex = nextFall;
+        }
+
+        if (numLines > 0) outfile << ++fallIndex << endl; // Increment fallIndex because problem uses base 1 counting
     }
 
     return 0;
-}
-
-int ballRollIndex(ifstream& infile, string line, int numLines) {
-    int fallIndex = 1, currFall, nextFall;
-    for (int i = 0; i < numLines; i++) {
-        getline(infile, line);
-        currFall = nextFallIndex(fallIndex, line);
-        if (i < numLines - 1) {
-            getline(infile, line);
-            i++;
-        }
-        nextFall = nextFallIndex(currFall, line);
-        if (fallIndex < currFall) fallIndex = currFall;
-        if (fallIndex < nextFall) fallIndex = nextFall;
-    }
-    return fallIndex + (fallIndex != 1); //return 1 if fallIndex is unchanged and fallIndex+1 otherwise.
-}
-
-int nextFallIndex(int fallIndex, string line) {
-    int nextFall = 0, edge = line.size();
-    while (nextFall < fallIndex && nextFall < edge) {
-        if (line.find(' ') != string::npos)
-            nextFall += line.find(' ') + (nextFall != 0);
-        else
-            nextFall += line.size() + (nextFall != 0);
-        line.erase(0, line.find(' ') + 1);
-    }
-    return nextFall;
 }
 
 
