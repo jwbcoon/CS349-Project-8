@@ -6,7 +6,7 @@ using namespace std;
 // Function Prototypes
 void initFiles(ifstream& infile, ofstream& outfile, int argc, char* argv[]);
 int ballRollIndex(ifstream& infile, string line, int numLines);
-int nextFallIndex(int param, string line);
+int nextFallIndex(int fallIndex, string line);
 
 int main(int argc, char** argv) {
     // Variable defs
@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 }
 
 int ballRollIndex(ifstream& infile, string line, int numLines) {
-    int fallIndex = 1, currFall = 1, nextFall;
+    int fallIndex = 1, currFall, nextFall;
     for (int i = 0; i < numLines; i++) {
         getline(infile, line);
         currFall = nextFallIndex(fallIndex, line);
@@ -38,7 +38,7 @@ int ballRollIndex(ifstream& infile, string line, int numLines) {
         if (fallIndex < currFall) fallIndex = currFall;
         if (fallIndex < nextFall) fallIndex = nextFall;
     }
-    return fallIndex + 1;
+    return fallIndex + (fallIndex != 1); //return 1 if fallIndex is unchanged and fallIndex+1 otherwise.
 }
 
 int nextFallIndex(int fallIndex, string line) {
