@@ -43,12 +43,11 @@ int ballRollIndex(ifstream& infile, string line, int numLines) {
 
 int nextFallIndex(int fallIndex, string line) {
     int nextFall = 0, edge = line.size();
-    auto spaceIsDeleted = [](int nxtFallVal){ return nxtFallVal != 0; }; //add 1 for every deleted space.
     while (nextFall < fallIndex && nextFall < edge) {
         if (line.find(' ') != string::npos)
-            nextFall += line.find(' ') + spaceIsDeleted(nextFall);
+            nextFall += line.find(' ') + (nextFall != 0);
         else
-            nextFall += line.size() + spaceIsDeleted(nextFall);
+            nextFall += line.size() + (nextFall != 0);
         line.erase(0, line.find(' ') + 1);
     }
     return nextFall;
