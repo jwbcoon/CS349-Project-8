@@ -52,7 +52,6 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-
 /*
  *  This function receives user arguments and assigns them to the ifstream and ofstream objects which manage I/O
  *  for the program. If the user supplies no arguments, this function tries to resolve the issue.
