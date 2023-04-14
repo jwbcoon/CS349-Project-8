@@ -77,7 +77,7 @@ void initFiles(ifstream& infile, ofstream& outfile, int argc, char* argv[]){
         infile.open(fname);
     }
     else {
-        cout << "No input or output filename entered. Please run the program as ./ShipPather.out <input file> <output file>\n";
+        cout << "No input or output filename entered. Please run the program as ./Plinko.out <input file> <output file>\n";
         exit( EXIT_FAILURE);
     }
 
